@@ -1,0 +1,468 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>XL OTP Solution</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="robots" content="index, follow">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://my.kmsp-store.com/assets/css/spinner.css">
+    <link href="https://my.kmsp-store.com/assets/build/toastr.css" rel="stylesheet" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        /* CSS sesuai permintaan */
+        @media only screen and (min-width: 200px) {
+            .atur1 {
+                width: 90%;
+            }
+        }
+
+        @media only screen and (min-width: 600px) {
+            .atur1 {
+                width: 80%;
+            }
+        }
+
+        @media only screen and (min-width: 1000px) {
+            .atur1 {
+                width: 50%;
+            }
+        }
+
+        @media only screen and (min-width: 1300px) {
+            .atur1 {
+                width: 30%;
+            }
+        }
+
+        body {
+            background: linear-gradient(135deg, #362724, #2404B3);
+            font-family: 'Arial', sans-serif;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            margin-top: 20px;
+            margin-bottom: 100px;
+            padding: 20px;
+            background: #cfe4e5;
+            border-radius: 8px;
+            transition: transform 0.3s ease-in-out;
+            max-width: 90%;
+        }
+
+        .container:hover {
+            transform: scale(1.05);
+        }
+
+        h3 {
+            font-weight: bold;
+            color: #333333;
+        }
+
+        #hasilnya {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .alert {
+            background: #f1f1f1;
+            border: none;
+            color: #333333;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            box-shadow: none;
+            border-color: #dddddd;
+            padding: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border: none;
+            border-radius: 8px;
+            box-shadow: none;
+            padding: 10px 20px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+        }
+
+        #cover-spin {
+            position: fixed;
+            width: 100%;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.7);
+            z-index: 9999;
+            display: none;
+        }
+
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #cover-spin::after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 40px;
+            height: 40px;
+            border-style: solid;
+            border-color: black;
+            border-top-color: transparent;
+            border-width: 4px;
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cover-spin"></div>
+    <div class="container atur1">
+        <center>
+            <h3>PETARUKAN STORE</h3><b>Silahkan OTP Sendiri ya kak</b>
+        </center>
+        <br>
+        <div class="alert alert-success">
+            <strong><i class="fa fa-bullhorn" aria-hidden="true"></i> INFO</strong><br>
+            Setelah Berhasil Login Bisa Langsung Konfirmasi Ke Penjual Agar Paket Anda Segera Diproses!
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="msisdn">Nomor XL</label>
+                <input type="number" class="form-control" id="msisdn" placeholder="08xxx / 628xxx" maxlength="14"
+                    required>
+            </div>
+            <button type="button" class="btn btn-primary" id="reqOTP"><i class="fa fa-sign-in" aria-hidden="true"></i> Minta Kode OTP</button>
+            <button type="button" class="btn btn-primary" id="checkVerOTP"><i class="fa fa-sign-in" aria-hidden="true"></i> Cek Status Verifikasi</button>
+            <br><br>
+            <div class="form-group">
+                <label for="otp">Kode OTP</label>
+                <input type="number" class="form-control" id="otp" placeholder="123456" maxlength="6" required>
+            </div>
+            <input type="hidden" id="auth_id" name="auth_id" value="">
+            <input type="hidden" id="access_token_temp" name="access_token_temp" value="">
+            <button type="button" class="btn btn-primary" id="verOTP"><i class="fa fa-sign-in" aria-hidden="true"></i> Login</button>
+            <div id="checkQuotaSection" style="display: none;"><br>
+                <button type="button" class="btn btn-primary" id="checkQuota"><i class="fa fa-sign-in" aria-hidden="true"></i> Cek Kuota</button>
+            </div>
+            <div id="hasilPaket" style="display: none;">
+                <br>
+                <h2>Kuota Information</h2>
+                <p id="textKuota" style="text-align: justify;"></p>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Paket</th>
+                            <th>Expired</th>
+                            <th>Benefits</th>
+                        </tr>
+                    </thead>
+                    <tbody id="packageTableBody">
+                    </tbody>
+                </table>
+            </div>
+            <br><br>
+            <div id="logResponseSection">
+                <p><b>Log Response</b></p>
+                <textarea id="logResponse" class="form-control" disabled></textarea>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        var jsonData = {};
+
+        $(document).ready(function() {
+            $('#reqOTP').click(function() {
+                $.ajax({
+                    type: 'POST',
+                    crossDomain: true,
+                    url: "https://nomorxlku.my.id/api/req_otp.php",
+                    data: {
+                        msisdn: $('#msisdn').val(),
+                        seller_code: 'hesda.store'
+                    },
+                    dataType: 'JSON',
+                    'contentType': 'application/x-www-form-urlencoded',
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        //error
+                        $('#auth_id').val('');
+                        $('#otp').val('');
+                        $('#logResponse').html('Terjadi kesalahan, silakan coba lagi!');
+                        $('#cover-spin').hide();
+                    },
+                    cache: false,
+                    beforeSend: function(request) {
+                        //sebelum kirim
+                        $('#logResponse').html('');
+                        $('#cover-spin').show(0);
+                    },
+                    success: function(s) {
+                        //console.log(s);
+
+                        $('#cover-spin').hide();
+
+                        if (s['status'] == false) {
+                            $('#otp').val('');
+                            $('#auth_id').val('');
+                            $('#logResponse').html(s['message']);
+                        }
+
+                        if (s['status'] == true) {
+                            $('#otp').val('');
+                            $('#auth_id').val(s['data']['auth_id']);
+                            $('#logResponse').html(s['message']);
+                        }
+                    }
+                });
+            });
+
+            $('#verOTP').click(function() {
+                $.ajax({
+                    type: 'POST',
+                    crossDomain: true,
+                    url: "https://nomorxlku.my.id/api/ver_otp.php",
+                    data: {
+                        msisdn: $('#msisdn').val(),
+                        auth_id: $('#auth_id').val(),
+                        otp: $('#otp').val()
+                    },
+                    dataType: 'JSON',
+                    'contentType': 'application/x-www-form-urlencoded',
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        //error
+                        $('#access_token_temp').val('');
+                        $('#checkQuotaSection').attr('style', 'display: none;');
+                        $('#logResponse').html('Terjadi kesalahan, silakan coba lagi!');
+                        $('#cover-spin').hide();
+                    },
+                    cache: false,
+                    beforeSend: function(request) {
+                        //sebelum kirim
+                        $('#logResponse').html('');
+                        $('#cover-spin').show(0);
+                    },
+                    success: function(s) {
+                        //console.log(s);
+
+                        $('#cover-spin').hide();
+
+                        if (s['status'] == false) {
+                            $('#access_token_temp').val('');
+                            $('#checkQuotaSection').attr('style', 'display: none;');
+                            $('#logResponse').html(s['message']);
+                        }
+
+                        if (s['status'] == true) {
+                            $('#auth_id').val('');
+                            $('#otp').val('');
+                            $('#logResponse').html(s['message']);
+
+                            $('#access_token_temp').val(s['data']['access_token']);
+                            $('#checkQuotaSection').attr('style', 'display: block;');
+
+                            $('#reqOTP').hide();
+                            $('#checkVerOTP').hide();
+                            $('#verOTP').hide();
+                            $('#otp').closest('.form-group').hide();
+                            // $('#logResponseSection').hide();
+                        }
+                    }
+                });
+            });
+
+            $('#checkVerOTP').click(function() {
+                $.ajax({
+                    type: 'POST',
+                    crossDomain: true,
+                    url: "https://nomorxlku.my.id/api/check_ver_otp.php",
+                    data: {
+                        username: 'hesda.store',
+                        msisdn: $('#msisdn').val()
+                    },
+                    dataType: 'JSON',
+                    'contentType': 'application/x-www-form-urlencoded',
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        //error
+                        $('#logResponse').html('Terjadi kesalahan, silakan coba lagi!');
+                        $('#cover-spin').hide();
+                    },
+                    cache: false,
+                    beforeSend: function(request) {
+                        //sebelum kirim
+                        $('#logResponse').html('');
+                        $('#cover-spin').show(0);
+                    },
+                    success: function(s) {
+                        //console.log(s);
+
+                        $('#cover-spin').hide();
+
+                        if (s['status'] == false) {
+                            $('#logResponse').html(s['message']);
+                        }
+
+                        if (s['status'] == true) {
+                            $('#logResponse').html(s['message']);
+                        }
+                    }
+                });
+            });
+
+            $('#checkQuota').click(function() {
+                $.ajax({
+                    type: 'POST',
+                    crossDomain: true,
+                    url: "https://nomorxlku.my.id/api/check_quota.php",
+                    data: {
+                        access_token: $('#access_token_temp').val()
+                    },
+                    dataType: 'JSON',
+                    'contentType': 'application/x-www-form-urlencoded',
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        //error
+                        $('#hasilPaket').hide();
+                        $('#logResponse').html('Terjadi kesalahan, silakan coba lagi!');
+                        $('#cover-spin').hide();
+                    },
+                    cache: false,
+                    beforeSend: function(request) {
+                        //sebelum kirim
+                        $('#logResponse').html('');
+                        $('#cover-spin').show(0);
+                    },
+                    success: function(s) {
+                        //console.log(s);
+
+                        $('#cover-spin').hide();
+
+                        if (s['status'] == false) {
+                            $('#hasilPaket').hide();
+                        }
+
+                        if (s['status'] == true) {
+                            jsonData = {};
+                            jsonData = s;
+                            populateTable();
+                            $('#hasilPaket').show();
+                        }
+                    }
+                });
+            });
+
+        });
+
+        function populateTable() {
+            var tableBody = document.getElementById("packageTableBody");
+            $('#packageTableBody').html('');
+
+            jsonData.data.quotas.forEach(function(quota) {
+                var benefitsHtml = "";
+                quota.benefits.forEach(function(benefit) {
+                    benefitsHtml += `<p>${benefit.name}: ${benefit.quota} ( ${benefit.remaining_quota} remaining )</p>`;
+                });
+
+                var row = `
+                <tr>
+                    <td>${quota.name}</td>
+                    <td>${quota.expired_at}</td>
+                    <td>${benefitsHtml}</td>
+                </tr>
+            `;
+
+                tableBody.innerHTML += row;
+            });
+        }
+    </script>
+
+    <!-- Code injected by live-server -->
+    <script>
+        // <![CDATA[  <-- For SVG support
+        if ('WebSocket' in window) {
+            (function() {
+                function refreshCSS() {
+                    var sheets = [].slice.call(document.getElementsByTagName("link"));
+                    var head = document.getElementsByTagName("head")[0];
+                    for (var i = 0; i < sheets.length; ++i) {
+                        var elem = sheets[i];
+                        var parent = elem.parentElement || head;
+                        parent.removeChild(elem);
+                        var rel = elem.rel;
+                        if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+                            var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+                            elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+                        }
+                        parent.appendChild(elem);
+                    }
+                }
+                var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+                var address = protocol + window.location.host + window.location.pathname + '/ws';
+                var socket = new WebSocket(address);
+                socket.onmessage = function(msg) {
+                    if (msg.data == 'reload') window.location.reload();
+                    else if (msg.data == 'refreshcss') refreshCSS();
+                };
+                if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+                    console.log('Live reload enabled.');
+                    sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+                }
+            })();
+        } else {
+            console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+        }
+        // ]]>
+    </script>
+</body>
+
+</html>
